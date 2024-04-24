@@ -6,11 +6,10 @@ import { Label } from "@/components/ui/label"
 
 const Application = () => {
     const handelSubmit = (e) => {
-        console.log("Hi")
         e.preventDefault()
         const formData = new FormData()
         formData.append('file', e.target.file.files[0])
-        fetch('http://localhost:5000/upload', {
+        fetch('http://localhost:8080/api/train', {
         method: 'POST',
         body: formData
         })
