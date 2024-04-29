@@ -87,7 +87,8 @@ const Application = () => {
             <section className="flex items-center justify-center p-20 flex-col">
                 <h1 className="text-4xl font-bold">Application</h1>
             </section>
-            <section className='flex items-center justify-center '>
+            <section className="flex flex-wrap justify-around">
+            <section className='flex items-center justify-center p-15 '>
                 <form onSubmit={handleSubmit} className="flex items-center justify-center p-2 flex-col">
                     <Label htmlFor="file" className="text-lg">Select CSV File</Label>
                     <Input type="file" id="file" name="file" accept=".csv" />
@@ -97,11 +98,12 @@ const Application = () => {
                     <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
                 </form>
             </section>
-            <section className="flex items-center justify-center p-10 flex-col">
+            <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Output</h1>
                 <p>Message: {message}</p>
                 <p>Train Samples: {trainSamples}</p>
                 <p>Test Samples: {testSamples}</p>
+            </section>
             </section>
         </>
     );
