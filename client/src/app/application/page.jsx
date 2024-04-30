@@ -91,10 +91,10 @@ const Application = () => {
             </section>
             <section className="flex flex-wrap justify-around">
                 <section className='flex items-center justify-center p-15 '>
-                    <form onSubmit={handleSubmit} className="flex items-center justify-center p-2 flex-col">
+                    <form  className="flex items-center justify-center p-2 flex-col">
                         <Label htmlFor="file" className="text-lg">Select CSV File</Label>
                         <Input type="file" id="file" name="file" accept=".csv" />
-                        <Button type="submit" className="mt-4">Upload Dataset</Button>
+                        <Button onClick={handleSubmit}className="mt-4">Upload Dataset</Button>
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
