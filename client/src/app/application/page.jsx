@@ -10,8 +10,6 @@ const Application = () => {
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
 
-    const apiServerUrl = process.env.REACT_APP_API_SERVER_URL;
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -20,7 +18,7 @@ const Application = () => {
         formData.append('file', file); // Append the file to FormData
 
         try {
-            const response = await axios.post(`${apiServerUrl}/api/upload`, formData, {
+            const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/api/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Change content type to multipart/form-data
                 },
@@ -39,7 +37,7 @@ const Application = () => {
 
     const handlePreprocess = async () => {
         try {
-            const response = await axios.post(`${apiServerUrl}/api/preprocess`);
+            const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/api/preprocess`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
@@ -56,7 +54,7 @@ const Application = () => {
 
     const handleTrainLR = async () => {
         try {
-            const response = await axios.post(`${apiServerUrl}/api/train/lr`);
+            const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/api/train/lr`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
@@ -71,7 +69,7 @@ const Application = () => {
 
     const handleTrainDT = async () => {
         try {
-            const response = await axios.post(`${apiServerUrl}/api/train/dt`);
+            const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/api/train/dt`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
