@@ -46,6 +46,16 @@ def preprocess_dataset():
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
     global dataset, classifier
+    global X,Y
+    global X_train, X_test, y_train, y_test
+    global precision
+    global accuracy
+    global recall
+    global fscore
+    precision.clear()
+    accuracy.clear()
+    recall.clear()
+    fscore.clear()
     if dataset is None:
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
 
@@ -75,6 +85,13 @@ def train_lr():
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
     global dataset, classifier
+    global classifier
+    global X,Y
+    global X_train, X_test, y_train, y_test
+    global precision
+    global accuracy
+    global recall
+    global fscore
     if dataset is None:
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
 
