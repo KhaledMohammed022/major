@@ -54,8 +54,20 @@ def train_lr():
     lr = LogisticRegression()
     lr.fit(X, y)
     classifier = lr
-
+    predict = dt.predict(X_test) 
+    acc = accuracy_score(y_test,predict)*100
+    p = precision_score(y_test,predict,average='macro') * 100
+    r = recall_score(y_test,predict,average='macro') * 100
+    f = f1_score(y_test,predict,average='macro') * 100
     return jsonify({'message': 'Logistic Regression model trained successfully'})
+    precision.append(p)
+    accuracy.append(acc)
+    recall.append(r)
+    fscore.append(f)
+    return jsonify({'message': 'Accuracy Score : '})
+    return jsonify({'message': 'Logistics Regression Precision : '})
+    return jsonify({'message': 'Logistics Regression Recall : '})
+    return jsonify({'message': 'Logistics Regression F1 Score : '})
 
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
@@ -70,23 +82,35 @@ def train_dt():
                                 min_samples_split=50, min_samples_leaf=20)
     dt.fit(X, y)
     classifier = dt
-
+    predict = dt.predict(X_test) 
+    acc = accuracy_score(y_test,predict)*100
+    p = precision_score(y_test,predict,average='macro') * 100
+    r = recall_score(y_test,predict,average='macro') * 100
+    f = f1_score(y_test,predict,average='macro') * 100
     return jsonify({'message': 'Decision Tree model trained successfully'})
+    precision.append(p)
+    accuracy.append(acc)
+    recall.append(r)
+    fscore.append(f)
+    return jsonify({'message': 'Accuracy Score : '})
+    return jsonify({'message': 'Decision Tree Precision : '})
+    return jsonify({'message': 'Decision Tree Recall : '})
+    return jsonify({'message': 'Decision Tree F1 Score : '})
+
+    
 
 @app.route('/api/predict', methods=['POST'])
+
 def predict():
+    text.delete('1.0', END)
     global classifier
-    if classifier is None:
-        return jsonify({'error': 'Model not trained yet'})
-
-    file = request.files.get('file')
-    if not file or file.filename == '':
-        return jsonify({'error': 'No file uploaded or empty filename'})
-
-    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    predictions = classifier.predict(test_data)
-
-    return jsonify({'predictions': predictions.tolist()})
-
-if __name__ == '__main__':
-    app.run(debug=False, port=8080)
+    filename = filedialog.askopenfilename(initialdir="Dataset")
+    test = pd.read_csv(filename)
+    test = test.values
+    predict = classifier.predict(test)
+    print(predict)
+    for i in range(len(predict)):
+        if predict[i] == 0:
+            text.insert(END,str(test[i])+" Resources are available. Task can be schedule\n\n")
+        else:
+            text.insert(END,str(test[i])+" Resources are NOT available. Task can be schedule after freeing resources\n\n")
