@@ -10,9 +10,13 @@ import io
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allowing all origins for demonstration purposes
 
-# Global variables for dataset and classifier
+# Global variables for dataset, classifier, and evaluation metrics
 dataset = None
 classifier = None
+precision = []
+accuracy = []
+recall = []
+fscore = []
 
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
