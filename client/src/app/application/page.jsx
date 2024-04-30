@@ -10,7 +10,7 @@ const Application = () => {
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
 
-    const apiServerUrl = 'https://major-nu.vercel.app'; // Your API server URL
+    const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
 
     const handleSubmit = async (e) => {
         e.preventDefault();
