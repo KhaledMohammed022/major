@@ -1,4 +1,3 @@
-'use client'
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,8 @@ const Application = () => {
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
 
+    const apiServerUrl = process.env.REACT_APP_API_SERVER_URL;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -18,7 +19,7 @@ const Application = () => {
         formData.append('file', file); // Append the file to FormData
 
         try {
-            const response = await axios.post('http://127.0.0.1:8080/api/upload', formData, {
+            const response = await axios.post(`${apiServerUrl}/api/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Change content type to multipart/form-data
                 },
@@ -37,7 +38,7 @@ const Application = () => {
 
     const handlePreprocess = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8080/api/preprocess');
+            const response = await axios.post(`${apiServerUrl}/api/preprocess`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
@@ -54,7 +55,7 @@ const Application = () => {
 
     const handleTrainLR = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8080/api/train/lr');
+            const response = await axios.post(`${apiServerUrl}/api/train/lr`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
@@ -69,7 +70,7 @@ const Application = () => {
 
     const handleTrainDT = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8080/api/train/dt');
+            const response = await axios.post(`${apiServerUrl}/api/train/dt`);
 
             if (response.status !== 200) {
                 throw new Error('Network response was not ok');
@@ -88,26 +89,25 @@ const Application = () => {
                 <h1 className="text-4xl font-bold">Application</h1>
             </section>
             <section className="flex flex-wrap justify-around">
-            <section className='flex items-center justify-center p-15 '>
-                <form onSubmit={handleSubmit} className="flex items-center justify-center p-2 flex-col">
-                    <Label htmlFor="file" className="text-lg">Select CSV File</Label>
-                    <Input type="file" id="file" name="file" accept=".csv" />
-                    <Button type="submit" className="mt-4">Upload Dataset</Button>
-                    <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
-                    <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
-                    <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
-                </form>
-            </section>
-            <section className="flex items-center justify-center p-15 flex-col">
-                <h1 className="text-2xl font-bold">Output</h1>
-                <p>Message: {message}</p>
-                <p>Train Samples: {trainSamples}</p>
-                <p>Test Samples: {testSamples}</p>
-            </section>
+                <section className='flex items-center justify-center p-15 '>
+                    <form onSubmit={handleSubmit} className="flex items-center justify-center p-2 flex-col">
+                        <Label htmlFor="file" className="text-lg">Select CSV File</Label>
+                        <Input type="file" id="file" name="file" accept=".csv" />
+                        <Button type="submit" className="mt-4">Upload Dataset</Button>
+                        <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
+                        <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
+                        <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
+                    </form>
+                </section>
+                <section className="flex items-center justify-center p-15 flex-col">
+                    <h1 className="text-2xl font-bold">Output</h1>
+                    <p>Message: {message}</p>
+                    <p>Train Samples: {trainSamples}</p>
+                    <p>Test Samples: {testSamples}</p>
+                </section>
             </section>
         </>
     );
 }
 
 export default Application;
-
