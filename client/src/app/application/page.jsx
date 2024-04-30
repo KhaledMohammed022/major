@@ -10,7 +10,7 @@ const Application = () => {
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
 
-    const apiServerUrl = process.env.REACT_APP_API_SERVER_URL;
+    const apiServerUrl = 'https://major-nu.vercel.app'
 
     const handleSubmit = async (e) => {
         e.preventDefault();
