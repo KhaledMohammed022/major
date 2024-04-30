@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast"
 import axios from 'axios';
 
 const Application = () => {
     const [message, setMessage] = useState('');
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
+    const { toast } = useToast();
 
     const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
 
@@ -27,9 +29,12 @@ const Application = () => {
             });
 
             if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
                 throw new Error('Network response was not ok');
             }
-
+            if(response.status === 200 && response.data.message === "Dataset uploaded successfully"){
+            toast({ description: "Dataset uploaded successfully" })
+            }
             const data = response.data;
             setMessage(data.message);
         } catch (error) {
@@ -42,6 +47,7 @@ const Application = () => {
             const response = await axios.post(`${apiServerUrl}/api/preprocess`);
 
             if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
                 throw new Error('Network response was not ok');
             }
 
@@ -59,6 +65,7 @@ const Application = () => {
             const response = await axios.post(`${apiServerUrl}/api/train/lr`);
 
             if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
                 throw new Error('Network response was not ok');
             }
 
@@ -74,6 +81,7 @@ const Application = () => {
             const response = await axios.post(`${apiServerUrl}/api/train/dt`);
 
             if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
                 throw new Error('Network response was not ok');
             }
 
