@@ -90,15 +90,17 @@ const Application = () => {
                 <h1 className="text-4xl font-bold">Application</h1>
             </section>
             <section className="flex flex-wrap justify-around">
-                <section className='flex items-center justify-center p-15 '>
-                    <form  className="flex items-center justify-center p-2 flex-col">
-                        <Label htmlFor="file" className="text-lg">Select CSV File</Label>
-                        <Input type="file" id="file" name="file" accept=".csv" />
-                        <Button onClick={handleSubmit}className="mt-4">Upload Dataset</Button>
+                <section className='flex items-center justify-center p-15 '>    
+                    <div className='flex items-center justify-center p-15 flex-col'>
+                        <form onSubmit={handleSubmit} className="flex items-center justify-center p-2 flex-col">
+                            <Label htmlFor="file" className="text-lg">Select CSV File</Label>
+                            <Input type="file" id="file" name="file" accept=".csv" />
+                            <Button type="submit" className="mt-4">Upload Dataset</Button>
+                        </form>
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
-                    </form>
+                    </div>
                 </section>
                 <section className="flex items-center justify-center p-15 flex-col">
                     <h1 className="text-2xl font-bold">Output</h1>
