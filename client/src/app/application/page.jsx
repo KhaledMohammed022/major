@@ -10,6 +10,11 @@ const Application = () => {
     const [message, setMessage] = useState('');
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
+    const [predictions, setPredictions] = useState('');
+    const [accuracy, setAccuracy] = useState('');
+    const [precision, setPrecision] = useState('');
+    const [recall, setRecall] = useState('');
+    const [f1Score, setF1Score] = useState('');
     const { toast } = useToast();
 
     const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
@@ -92,6 +97,24 @@ const Application = () => {
         }
     }
 
+    const handlePredict = async () => {
+        try {
+            const response = await axios.post(`${apiServerUrl}/api/predict`);
+
+            if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
+                throw new Error('Network response was not ok');
+            }
+
+            const data = response.data;
+            // Assuming predictions are received as an array in response
+            const predictions = data.predictions;
+            setPredictions(predictions);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
     return (
         <>
             <section className="flex items-center justify-center p-20 flex-col">
@@ -108,13 +131,34 @@ const Application = () => {
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
+                        <Button onClick={handlePredict} className="mt-4">Prediction</Button>
                     </div>
                 </section>
+                {trainSamples && (
+                    <section className="flex items-center justify-center p-15 flex-col">
+                        <h1 className="text-2xl font-bold">Training Samples</h1>
+                        <p>Train Samples: {trainSamples}</p>
+                        <p>Test Samples: {testSamples}</p>
+                    </section>
+                )}
+                {predictions && (
+                    <section className="flex items-center justify-center p-15 flex-col">
+                        <h1 className="text-2xl font-bold">Predictions</h1>
+                        <p>Predictions: {predictions}</p>
+                    </section>
+                )}
+                {accuracy && (
+                    <section className="flex items-center justify-center p-15 flex-col">
+                        <h1 className="text-2xl font-bold">Accuracy</h1>
+                        <p>Accuracy: {accuracy}</p>
+                        <p>Precision: {precision}</p>
+                        <p>Recall: {recall}</p>
+                        <p>F1 Score: {f1Score}</p>
+                    </section>
+                )}
                 <section className="flex items-center justify-center p-15 flex-col">
                     <h1 className="text-2xl font-bold">Output</h1>
                     <p>Message: {message}</p>
-                    <p>Train Samples: {trainSamples}</p>
-                    <p>Test Samples: {testSamples}</p>
                 </section>
             </section>
         </>
