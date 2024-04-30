@@ -1,4 +1,3 @@
-'use client'
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ const Application = () => {
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
 
-    const apiServerUrl = 'https://major-nu.vercel.app'
+    const apiServerUrl = process.env.REACT_APP_API_SERVER_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
