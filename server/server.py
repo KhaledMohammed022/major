@@ -5,10 +5,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 import pandas as pd
 import io
-import numpy as np
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allowing all origins for demonstration purposes
 
 # Global variables for dataset and classifier
 dataset = None
@@ -90,4 +89,4 @@ def predict():
     return jsonify({'predictions': predictions.tolist()})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=False, port=8080)
