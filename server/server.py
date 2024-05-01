@@ -102,6 +102,47 @@ def train_dt():
         'f1_score': f
     })
 
+def train_rf():
+    global classifier
+    global X,Y
+    global X_train, X_test, y_train, y_test
+    global precision
+    global accuracy
+    global recall
+    global fscore
+
+     if dataset is None:
+         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
+
+     X = dataset.iloc[:, :-1]
+     y = dataset.iloc[:, -1]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+    rf =  RandomForestClassifier(n_estimators= 10, criterion="entropy")
+    rf.fit(X_train, y_train)
+    predict = rf.predict(X_test) 
+    acc = accuracy_score(y_test,predict)*100
+    classifier = rf
+    p = precision_score(y_test,predict,average='macro') * 100
+    r = recall_score(y_test,predict,average='macro') * 100
+    f = f1_score(y_test,predict,average='macro') * 100
+    text.insert(END,name+" Precision  : "+str(p)+"\n")
+    text.insert(END,name+" Recall     : "+str(r)+"\n")
+    text.insert(END,name+" F1-Score   : "+str(f)+"\n")
+    text.insert(END,name+" Accuracy   : "+str(acc)+"\n\n")
+    precision.append(p)
+    accuracy.append(acc)
+    recall.append(r)
+    fscore.append(f)
+    return jsonify({
+        'message': 'Random Forest model trained successfully',
+        'accuracy_score': acc,
+        'precision_score': p,
+        'recall_score': r,
+        'f1_score': f
+    })
+
 @app.route('/api/predict', methods=['POST'])
 def predict():
     global classifier
