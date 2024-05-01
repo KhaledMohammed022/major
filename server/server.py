@@ -13,10 +13,6 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allowing all origins for d
 # Global variables for dataset, classifier, and evaluation metrics
 dataset = None
 classifier = None
-precision = []
-accuracy = []
-recall = []
-fscore = []
 
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
@@ -50,16 +46,6 @@ def preprocess_dataset():
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
     global dataset, classifier
-    global X,Y
-    global X_train, X_test, y_train, y_test
-    global precision
-    global accuracy
-    global recall
-    global fscore
-    precision.clear()
-    accuracy.clear()
-    recall.clear()
-    fscore.clear()
     if dataset is None:
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
 
@@ -89,13 +75,6 @@ def train_lr():
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
     global dataset, classifier
-    global classifier
-    global X,Y
-    global X_train, X_test, y_train, y_test
-    global precision
-    global accuracy
-    global recall
-    global fscore
     if dataset is None:
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
 
@@ -126,23 +105,19 @@ def train_dt():
 @app.route('/api/predict', methods=['POST'])
 def predict():
     global classifier
-    file = request.files.get('file')  # Get the file from the request
+    if classifier is None:
+        return jsonify({'error': 'Model not trained yet'})
 
+    file = request.files.get('file')  # Get the file from the request
     if not file or file.filename == '':
         return jsonify({'error': 'No file uploaded or empty filename'})
 
-    # Assuming the uploaded file is a CSV file
     test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
     test_data = test_data.dropna()  # Remove any rows with missing values
 
-    # Perform any necessary preprocessing on the test data
-    # For example, if the test data has the same features as the training data,
-    # you can directly use the classifier to make predictions
     predictions = classifier.predict(test_data)
 
-    # Assuming predictions is a list of predicted labels or classes
-    # You can format the predictions as needed and return them in the response
-    return jsonify({'predictions': predictions})
+    return jsonify({'predictions': predictions.tolist()})
 
 if __name__ == '__main__':
     app.run(debug=False)
