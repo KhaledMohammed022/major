@@ -38,7 +38,7 @@ const Application = () => {
                 throw new Error('Network response was not ok');
             }
             if(response.status === 200 && response.data.message === "Dataset uploaded successfully"){
-            toast({ description: "Dataset uploaded successfully" })
+                toast({ description: "Dataset uploaded successfully" })
             }
             const data = response.data;
             setMessage(data.message);
@@ -76,6 +76,10 @@ const Application = () => {
 
             const data = response.data;
             setMessage(data.message);
+            setAccuracy(data.accuracy_score);
+            setPrecision(data.precision_score);
+            setRecall(data.recall_score);
+            setF1Score(data.f1_score);
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
@@ -92,14 +96,28 @@ const Application = () => {
 
             const data = response.data;
             setMessage(data.message);
+            setAccuracy(data.accuracy_score);
+            setPrecision(data.precision_score);
+            setRecall(data.recall_score);
+            setF1Score(data.f1_score);
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
     }
 
-    const handlePredict = async () => {
+    const handlePredict = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        const file = document.getElementById('file').files[0]; // Get the file from the input element
+
+        formData.append('file', file); // Append the file to FormData
+
         try {
-            const response = await axios.post(`${apiServerUrl}/api/predict`);
+            const response = await axios.post(`${apiServerUrl}/api/predict`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Change content type to multipart/form-data
+                },
+            });
 
             if (response.status !== 200) {
                 toast({ description: "There was a problem with the fetch operation" });
@@ -107,9 +125,8 @@ const Application = () => {
             }
 
             const data = response.data;
-            // Assuming predictions are received as an array in response
-            const predictions = data.predictions;
-            setPredictions(predictions);
+            setMessage(data.message);
+            setPredictions(data.predictions);
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
@@ -131,9 +148,14 @@ const Application = () => {
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
-                        <Button onClick={handlePredict} className="mt-4">Prediction</Button>
+                        <form onSubmit={handlePredict} className="flex items-center justify-center p-2 flex-col">
+                            <Label htmlFor="file" className="text-lg">Select CSV File</Label>
+                            <Input type="file" id="file" name="file" accept=".csv" />
+                            <Button type="submit" className="mt-4">Upload Dataset for Prediction</Button>
+                        </form>
                     </div>
                 </section>
+                <div>
                 {trainSamples && (
                     <section className="flex items-center justify-center p-15 flex-col">
                         <h1 className="text-2xl font-bold">Training Samples</h1>
@@ -141,25 +163,29 @@ const Application = () => {
                         <p>Test Samples: {testSamples}</p>
                     </section>
                 )}
-                {predictions && (
+                <br />
+                {(accuracy || precision || recall || f1Score) && (
                     <section className="flex items-center justify-center p-15 flex-col">
-                        <h1 className="text-2xl font-bold">Predictions</h1>
-                        <p>Predictions: {predictions}</p>
-                    </section>
-                )}
-                {accuracy && (
-                    <section className="flex items-center justify-center p-15 flex-col">
-                        <h1 className="text-2xl font-bold">Accuracy</h1>
+                        <h1 className="text-2xl font-bold">Evaluation Metrics</h1>
                         <p>Accuracy: {accuracy}</p>
                         <p>Precision: {precision}</p>
                         <p>Recall: {recall}</p>
                         <p>F1 Score: {f1Score}</p>
                     </section>
                 )}
+                <br />
+                {predictions && (
+                    <section className="flex items-center justify-center p-15 flex-col">
+                        <h1 className="text-2xl font-bold">Predictions</h1>
+                        <p>Predictions: {predictions}</p>
+                    </section>
+                )}
+                <br />
                 <section className="flex items-center justify-center p-15 flex-col">
                     <h1 className="text-2xl font-bold">Output</h1>
                     <p>Message: {message}</p>
                 </section>
+                </div>
             </section>
         </>
     );
