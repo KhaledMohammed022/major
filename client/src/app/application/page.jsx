@@ -105,6 +105,26 @@ const Application = () => {
         }
     }
 
+    const handelTrainRF = async () => {
+        try {
+            const response = await axios.post(`${apiServerUrl}/api/train/rf`);
+
+            if (response.status !== 200) {
+                toast({ description: "There was a problem with the fetch operation" });
+                throw new Error('Network response was not ok');
+            }
+
+            const data = response.data;
+            setMessage(data.message);
+            setAccuracy(data.accuracy_score);
+            setPrecision(data.precision_score);
+            setRecall(data.recall_score);
+            setF1Score(data.f1_score);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
     const handlePredict = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -148,6 +168,7 @@ const Application = () => {
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
+                        <Button onClick= {handelTrainRF} className="mt-4">Train Random Forest</Button>
                         <form onSubmit={handlePredict} className="flex items-center justify-center p-2 flex-col">
                             <Label htmlFor="file" className="text-lg">Select CSV File</Label>
                             <Input type="file" id="file" name="file" accept=".csv" />
@@ -167,6 +188,7 @@ const Application = () => {
                 {(accuracy || precision || recall || f1Score) && (
                     <section className="flex items-center justify-center p-15 flex-col">
                         <h1 className="text-2xl font-bold">Evaluation Metrics</h1>
+                        <h3>{message}</h3>
                         <p>Accuracy: {accuracy}</p>
                         <p>Precision: {precision}</p>
                         <p>Recall: {recall}</p>
