@@ -18,10 +18,11 @@ logging.basicConfig(level=logging.ERROR)
 # Global variables for dataset, classifier, and evaluation metrics
 dataset = None
 classifier = None
+feature_names = None  # To store feature names from the training data
 
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
-    global dataset
+    global dataset, feature_names
     file = request.files.get('file')  # Get the file from the request
 
     if not file or file.filename == '':
@@ -30,11 +31,12 @@ def upload_dataset():
 
     dataset = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
     dataset = dataset.dropna()  # Remove any rows with missing values
+    feature_names = list(dataset.columns)[:-1]  # Exclude the target column
     return jsonify({'message': 'Dataset uploaded successfully'})
 
 @app.route('/api/preprocess', methods=['POST'])
 def preprocess_dataset():
-    global dataset
+    global dataset, feature_names
     if dataset is None:
         logging.error('Dataset not uploaded yet')
         return jsonify({'error': 'Dataset not uploaded yet'})
@@ -52,7 +54,7 @@ def preprocess_dataset():
 
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
-    global dataset, classifier
+    global dataset, classifier, feature_names
     if dataset is None:
         logging.error('Dataset not uploaded or preprocessed yet')
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
@@ -82,7 +84,7 @@ def train_lr():
 
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
-    global dataset, classifier
+    global dataset, classifier, feature_names
     if dataset is None:
         logging.error('Dataset not uploaded or preprocessed yet')
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
@@ -113,7 +115,7 @@ def train_dt():
 
 @app.route('/api/train/rf', methods=['POST'])
 def train_rf():
-    global dataset, classifier
+    global dataset, classifier, feature_names
     if dataset is None:
         logging.error('Dataset not uploaded or preprocessed yet')
         return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
@@ -143,7 +145,7 @@ def train_rf():
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
-    global classifier
+    global classifier, feature_names
     if classifier is None:
         logging.error('Model not trained yet')
         return jsonify({'error': 'Model not trained yet'})
@@ -156,7 +158,7 @@ def predict():
     test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
     test_data = test_data.dropna()  # Remove any rows with missing values
 
-    if set(test_data.columns) != set(dataset.columns):
+    if set(test_data.columns) != set(feature_names):
         logging.error('Feature names do not match')
         return jsonify({'error': 'Feature names do not match'})
 
