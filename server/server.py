@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pandas as pd
 import io
@@ -132,6 +134,13 @@ def train_rf():
         'f1_score': f
     })
 
+def graph():
+    df = pd.DataFrame([['Logistic Regression','Accuracy',accuracy[0]],['Logistic Regression','Precision',precision[0]],['Logistic Regression','Recall',recall[0]],['Logistic Regression','FScore',fscore[0]],
+                       ['Decision Tree','Accuracy',accuracy[1]],['Decision Tree','Precision',precision[1]],['Decision Tree','Recall',recall[1]],['Decision Tree','FScore',fscore[1]],
+                       ],columns=['Parameters','Algorithms','Value'])
+    df.pivot("Parameters", "Algorithms", "Value").plot(kind='bar')
+    plt.show()
+    
 @app.route('/api/predict', methods=['POST'])
 def predict():
     global classifier
