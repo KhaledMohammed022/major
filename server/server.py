@@ -158,6 +158,10 @@ def predict():
     test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
     test_data = test_data.dropna()  # Remove any rows with missing values
 
+    # Debugging: Print feature names for troubleshooting
+    logging.info('Training Feature Names: %s', feature_names)
+    logging.info('Prediction Feature Names: %s', list(test_data.columns))
+
     if set(test_data.columns) != set(feature_names):
         logging.error('Feature names do not match')
         return jsonify({'error': 'Feature names do not match'})
