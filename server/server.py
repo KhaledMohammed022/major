@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import Flask, request, jsonify
 import pandas as pd
 import io
 from sklearn.model_selection import train_test_split
@@ -15,9 +15,10 @@ dataset = None
 lr_model = None
 dt_model = None
 rf_model = None
+scaler = StandardScaler()  # Initialize a scaler
 
 # Preprocessing function
-def preprocess_data(data):
+def preprocess_data(data, fit_scaler=False):
     # Handle missing values (if any)
     data.dropna(inplace=True)
     
@@ -26,9 +27,10 @@ def preprocess_data(data):
     data = pd.get_dummies(data)
     
     # Standardize numerical features
-    scaler = StandardScaler()
     numerical_cols = data.select_dtypes(include=['float64', 'int64']).columns
-    data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+    if fit_scaler:  # Fit the scaler on the training data only
+        scaler.fit(data[numerical_cols])
+    data[numerical_cols] = scaler.transform(data[numerical_cols])  # Transform the data
     
     return data
 
@@ -52,7 +54,7 @@ def preprocess_dataset():
     if dataset is None:
         return jsonify({'error': 'Dataset not uploaded yet'})
 
-    dataset = preprocess_data(dataset)
+    dataset = preprocess_data(dataset, fit_scaler=True)
     X = dataset.iloc[:, :-1]
     y = dataset.iloc[:, -1]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -60,7 +62,7 @@ def preprocess_dataset():
     return jsonify({
         'message': 'Dataset preprocessed successfully',
         'train_samples': X_train.shape[0],
-        'test_samples': X_test.shape[0]
+        'test_samples': X_test.shape[0
     })
 
 # Endpoint for training Logistic Regression model
