@@ -126,15 +126,18 @@ def predict_dt():
 
 @app.route('/api/predict/rf', methods=['POST'])
 def predict_rf():
-    file = request.files.get('file')
+    file = request.files.get('file')  # Get the file from the request
     if not file or file.filename == '':
         logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
-    try:
-        test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-        test_data = test_data.dropna()
+    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
+    test_data = test_data.dropna()  # Remove any rows with missing values
 
+    # Log the column names of the prediction dataset
+    logging.info('Column names of prediction dataset: %s', test_data.columns)
+
+    try:
         predictions = classifiers['rf'].predict(test_data)
 
         result = []
