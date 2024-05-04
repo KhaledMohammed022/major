@@ -20,11 +20,10 @@ logging.basicConfig(level=logging.ERROR)
 # Global variables for dataset, classifiers, and feature names
 dataset = None
 classifiers = {'lr': None, 'dt': None, 'rf': None}
-feature_names = None  # To store feature names from the training data
 
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
-    global dataset, feature_names
+    global dataset
     file = request.files.get('file')  # Get the file from the request
 
     if not file or file.filename == '':
@@ -33,12 +32,11 @@ def upload_dataset():
 
     dataset = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
     dataset = dataset.dropna()  # Remove any rows with missing values
-    feature_names = list(dataset.columns)[:-1]  # Exclude the target column
     return jsonify({'message': 'Dataset uploaded successfully'})
 
 @app.route('/api/preprocess', methods=['POST'])
 def preprocess_dataset():
-    global dataset, feature_names
+    global dataset
     if dataset is None:
         logging.error('Dataset not uploaded yet')
         return jsonify({'error': 'Dataset not uploaded yet'})
@@ -99,15 +97,10 @@ def train_rf():
     return train_model(rf, 'rf')
 
 def predict(model_name, test_data):
-    global classifiers, feature_names
+    global classifiers
     if classifiers[model_name] is None:
         logging.error('Model not trained yet')
         return jsonify({'error': 'Model not trained yet'})
-
-    # Check if the feature names in test data match those used during training
-    if set(test_data.columns) != set(feature_names):
-        logging.error('Feature names do not match')
-        return jsonify({'error': 'Feature names do not match'})
 
     predictions = classifiers[model_name].predict(test_data)
     return jsonify({'predictions': predictions.tolist()})
