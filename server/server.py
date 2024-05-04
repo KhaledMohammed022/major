@@ -62,7 +62,7 @@ def preprocess_dataset():
     return jsonify({
         'message': 'Dataset preprocessed successfully',
         'train_samples': X_train.shape[0],
-        'test_samples': X_test.shape[0
+        'test_samples': X_test.shape[0],
     })
 
 # Endpoint for training Logistic Regression model
