@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 
 dataset = None
 classifiers = {'lr': None, 'dt': None, 'rf': None}
