@@ -4,31 +4,31 @@ import io
 import logging
 from flask import Flask
 from flask_cors import CORS
-from sklearn.model_selection import train_test_split  # Import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allowing all origins for demonstration purposes
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Configure logging to output to the console
 logging.basicConfig(level=logging.ERROR)
 
-# Global variables for dataset, classifiers, and feature names
 dataset = None
 classifiers = {'lr': None, 'dt': None, 'rf': None}
 
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
     global dataset
-    file = request.files.get('file')  # Get the file from the request
+    file = request.files.get('file')
 
     if not file or file.filename == '':
         logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
     dataset = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    dataset = dataset.dropna()  # Remove any rows with missing values
+    dataset = dataset.dropna()
     return jsonify({'message': 'Dataset uploaded successfully'})
 
 @app.route('/api/preprocess', methods=['POST'])
@@ -104,42 +104,39 @@ def predict(model_name, test_data):
 
 @app.route('/api/predict/lr', methods=['POST'])
 def predict_lr():
-    file = request.files.get('file')  # Get the file from the request
+    file = request.files.get('file')
     if not file or file.filename == '':
         logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
     test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    test_data = test_data.dropna()  # Remove any rows with missing values
+    test_data = test_data.dropna()
     return predict('lr', test_data)
 
 @app.route('/api/predict/dt', methods=['POST'])
 def predict_dt():
-    file = request.files.get('file')  # Get the file from the request
+    file = request.files.get('file')
     if not file or file.filename == '':
         logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
     test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    test_data = test_data.dropna()  # Remove any rows with missing values
+    test_data = test_data.dropna()
     return predict('dt', test_data)
 
 @app.route('/api/predict/rf', methods=['POST'])
 def predict_rf():
-    file = request.files.get('file')  # Get the file from the request
+    file = request.files.get('file')
     if not file or file.filename == '':
         logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
     try:
-        # Read the uploaded CSV file
         test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-        test_data = test_data.dropna()  # Remove any rows with missing values
+        test_data = test_data.dropna()
 
-        # Make predictions using the trained Random Forest classifier
         predictions = classifiers['rf'].predict(test_data)
 
-        # Prepare the response message based on predictions
         result = []
         for i in range(len(predictions)):
             if predictions[i] == 0:
@@ -151,7 +148,6 @@ def predict_rf():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-# Error handling for 404 (Not Found) and 500 (Internal Server Error)
 @app.errorhandler(404)
 def not_found_error(error):
     logging.error('Not Found: %s', request.url)
