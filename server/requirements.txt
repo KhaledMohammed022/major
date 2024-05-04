@@ -5,7 +5,6 @@ click==8.1.7
 colorama==0.4.6
 contourpy==1.2.1
 cycler==0.12.1
-Flask==2.0.2
 Flask-Cors==4.0.0
 fonttools==4.51.0
 gunicorn==22.0.0
@@ -30,4 +29,5 @@ six==1.16.0
 threadpoolctl==3.4.0
 tzdata==2024.1
 urllib3==2.2.1
-Werkzeug==3.0.2
+Flask==2.1.2
+Werkzeug==2.0.3
