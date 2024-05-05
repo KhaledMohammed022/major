@@ -1,153 +1,165 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify, send_file
 import pandas as pd
 import io
+import logging
+from flask import Flask
+from flask_cors import CORS
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Global variables for dataset and trained models
+logging.basicConfig(level=logging.INFO)
+
 dataset = None
-lr_model = None
-dt_model = None
-rf_model = None
-scaler = StandardScaler()  # Initialize a scaler
+classifiers = {'lr': None, 'dt': None, 'rf': None}
 
-# Preprocessing function
-def preprocess_data(data, fit_scaler=False):
-    # Handle missing values (if any)
-    data.dropna(inplace=True)
-    
-    # Perform encoding or scaling as needed
-    # For example, encoding categorical variables
-    data = pd.get_dummies(data)
-    
-    # Standardize numerical features
-    numerical_cols = data.select_dtypes(include=['float64', 'int64']).columns
-    if fit_scaler:  # Fit the scaler on the training data only
-        scaler.fit(data[numerical_cols])
-    data[numerical_cols] = scaler.transform(data[numerical_cols])  # Transform the data
-    
-    return data
-
-# Endpoint for uploading dataset
 @app.route('/api/upload', methods=['POST'])
 def upload_dataset():
     global dataset
     file = request.files.get('file')
 
     if not file or file.filename == '':
+        logging.error('No file uploaded or empty filename')
         return jsonify({'error': 'No file uploaded or empty filename'})
 
     dataset = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    
+    dataset = dataset.dropna()
     return jsonify({'message': 'Dataset uploaded successfully'})
 
-# Endpoint for preprocessing uploaded dataset
 @app.route('/api/preprocess', methods=['POST'])
 def preprocess_dataset():
     global dataset
     if dataset is None:
+        logging.error('Dataset not uploaded yet')
         return jsonify({'error': 'Dataset not uploaded yet'})
 
-    dataset = preprocess_data(dataset, fit_scaler=True)
     X = dataset.iloc[:, :-1]
     y = dataset.iloc[:, -1]
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
     return jsonify({
         'message': 'Dataset preprocessed successfully',
         'train_samples': X_train.shape[0],
-        'test_samples': X_test.shape[0],
+        'test_samples': X_test.shape[0]
     })
 
-# Endpoint for training Logistic Regression model
+def train_model(model, model_name):
+    global dataset, classifiers
+    if dataset is None:
+        logging.error('Dataset not uploaded or preprocessed yet')
+        return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
+
+    X = dataset.iloc[:, :-1]
+    y = dataset.iloc[:, -1]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+    model.fit(X_train, y_train)
+    classifiers[model_name] = model
+
+    predict = model.predict(X_test)
+    acc = accuracy_score(y_test, predict) * 100
+    p = precision_score(y_test, predict, average='macro') * 100
+    r = recall_score(y_test, predict, average='macro') * 100
+    f = f1_score(y_test, predict, average='macro') * 100
+
+    return jsonify({
+        'message': f'{model_name.capitalize()} model trained successfully',
+        'accuracy_score': acc,
+        'precision_score': p,
+        'recall_score': r,
+        'f1_score': f
+    })
+
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
-    global dataset, lr_model
-    if dataset is None:
-        return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
+    lr = LogisticRegression()
+    return train_model(lr, 'lr')
 
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
-
-    lr_model = LogisticRegression()
-    lr_model.fit(X, y)
-
-    return jsonify({'message': 'Logistic Regression model trained successfully'})
-
-# Endpoint for training Decision Tree model
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
-    global dataset, dt_model
-    if dataset is None:
-        return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
+    dt = DecisionTreeClassifier(criterion='entropy', splitter='random', max_depth=20,
+                                min_samples_split=50, min_samples_leaf=20)
+    return train_model(dt, 'dt')
 
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
-
-    dt_model = DecisionTreeClassifier()
-    dt_model.fit(X, y)
-
-    return jsonify({'message': 'Decision Tree model trained successfully'})
-
-# Endpoint for training Random Forest model
 @app.route('/api/train/rf', methods=['POST'])
 def train_rf():
-    global dataset, rf_model
-    if dataset is None:
-        return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
+    rf = RandomForestClassifier(n_estimators=10, criterion="entropy")
+    return train_model(rf, 'rf')
 
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
+def predict(model_name, test_data):
+    global classifiers
+    if classifiers[model_name] is None:
+        logging.error('Model not trained yet')
+        return jsonify({'error': 'Model not trained yet'})
 
-    rf_model = RandomForestClassifier(n_estimators=100, random_state=0)
-    rf_model.fit(X, y)
+    predictions = classifiers[model_name].predict(test_data)
+    return jsonify({'predictions': predictions.tolist()})
 
-    return jsonify({'message': 'Random Forest model trained successfully'})
-
-# Endpoint for predicting using Logistic Regression model
 @app.route('/api/predict/lr', methods=['POST'])
 def predict_lr():
-    global lr_model
-    if lr_model is None:
-        return jsonify({'error': 'Logistic Regression model not trained yet'})
+    file = request.files.get('file')
+    if not file or file.filename == '':
+        logging.error('No file uploaded or empty filename')
+        return jsonify({'error': 'No file uploaded or empty filename'})
 
-    test_data = pd.read_csv(io.StringIO(request.files['file'].read().decode('utf-8')))
-    test_data = preprocess_data(test_data)
-    predictions = lr_model.predict(test_data)
+    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
+    test_data = test_data.dropna()
+    return predict('lr', test_data)
 
-    return jsonify({'predictions': predictions.tolist()})
-
-# Endpoint for predicting using Decision Tree model
 @app.route('/api/predict/dt', methods=['POST'])
 def predict_dt():
-    global dt_model
-    if dt_model is None:
-        return jsonify({'error': 'Decision Tree model not trained yet'})
+    file = request.files.get('file')
+    if not file or file.filename == '':
+        logging.error('No file uploaded or empty filename')
+        return jsonify({'error': 'No file uploaded or empty filename'})
 
-    test_data = pd.read_csv(io.StringIO(request.files['file'].read().decode('utf-8')))
-    test_data = preprocess_data(test_data)
-    predictions = dt_model.predict(test_data)
+    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
+    test_data = test_data.dropna()
+    return predict('dt', test_data)
 
-    return jsonify({'predictions': predictions.tolist()})
-
-# Endpoint for predicting using Random Forest model
 @app.route('/api/predict/rf', methods=['POST'])
 def predict_rf():
-    global rf_model
-    if rf_model is None:
-        return jsonify({'error': 'Random Forest model not trained yet'})
+    file = request.files.get('file')  # Get the file from the request
+    if not file or file.filename == '':
+        logging.error('No file uploaded or empty filename')
+        return jsonify({'error': 'No file uploaded or empty filename'})
 
-    test_data = pd.read_csv(io.StringIO(request.files['file'].read().decode('utf-8')))
-    test_data = preprocess_data(test_data)
-    predictions = rf_model.predict(test_data)
+    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
+    test_data = test_data.dropna()  # Remove any rows with missing values
 
-    return jsonify({'predictions': predictions.tolist()})
+    # Log the column names of the prediction dataset
+    logging.info('Column names of prediction dataset: %s', test_data.columns)
+
+    try:
+        predictions = classifiers['rf'].predict(test_data)
+
+        result = []
+        for i in range(len(predictions)):
+            if predictions[i] == 0:
+                result.append(f'Resources are available. Task can be scheduled: {test_data.iloc[i]}')
+            else:
+                result.append(f'Resources are NOT available. Task can be scheduled after freeing resources: {test_data.iloc[i]}')
+
+        return jsonify({'predictions': result})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+@app.errorhandler(404)
+def not_found_error(error):
+    logging.error('Not Found: %s', request.url)
+    return jsonify({'error': 'Not Found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    logging.error('Internal Server Error: %s', error)
+    return jsonify({'error': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
