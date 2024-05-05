@@ -94,10 +94,13 @@ def train_rf():
     return train_model(rf, 'rf')
 
 def predict(model_name, test_data):
-    global classifiers
+    global classifiers, dataset
     if classifiers[model_name] is None:
         logging.error('Model not trained yet')
         return jsonify({'error': 'Model not trained yet'})
+
+    # Align the columns in the test data with the columns in the training data
+    test_data = test_data.reindex(columns=dataset.columns, fill_value=0)
 
     predictions = classifiers[model_name].predict(test_data)
     return jsonify({'predictions': predictions.tolist()})
