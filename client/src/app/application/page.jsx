@@ -133,7 +133,7 @@ const Application = () => {
         formData.append('file', file); // Append the file to FormData
 
         try {
-            const response = await axios.post(`${apiServerUrl}/api/predict`, formData, {
+            const response = await axios.post(`${apiServerUrl}/api/predict/lr`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Change content type to multipart/form-data
                 },

@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
             {children}
           </ThemeProvider>
           <Toaster />
+          <BackgroundBeams />
         </body>
       </html>
     </ClerkProvider>
