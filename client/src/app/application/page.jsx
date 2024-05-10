@@ -105,45 +105,25 @@ const Application = () => {
         }
     }
 
-    const handelTrainRF = async () => {
-        try {
-            const response = await axios.post(`${apiServerUrl}/api/train/rf`);
-
-            if (response.status !== 200) {
-                toast({ description: "There was a problem with the fetch operation" });
-                throw new Error('Network response was not ok');
-            }
-
-            const data = response.data;
-            setMessage(data.message);
-            setAccuracy(data.accuracy_score);
-            setPrecision(data.precision_score);
-            setRecall(data.recall_score);
-            setF1Score(data.f1_score);
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-    }
-
     const handlePredict = async (e) => {
         e.preventDefault();
         const formData = new FormData();
-        const file = document.getElementById('file').files[0]; // Get the file from the input element
-
+        const file = document.getElementById('predictFile').files[0]; // Get the file from the input element
+    
         formData.append('file', file); // Append the file to FormData
-
+    
         try {
-            const response = await axios.post(`${apiServerUrl}/api/predict/lr`, formData, {
+            const response = await axios.post(`${apiServerUrl}/api/predict`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Change content type to multipart/form-data
                 },
             });
-
+    
             if (response.status !== 200) {
                 toast({ description: "There was a problem with the fetch operation" });
                 throw new Error('Network response was not ok');
             }
-
+    
             const data = response.data;
             setMessage(data.message);
             setPredictions(data.predictions);
@@ -151,6 +131,7 @@ const Application = () => {
             console.error('There was a problem with the fetch operation:', error);
         }
     }
+    
 
     return (
         <>
@@ -168,10 +149,9 @@ const Application = () => {
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
-                        <Button onClick= {handelTrainRF} className="mt-4">Train Random Forest</Button>
                         <form onSubmit={handlePredict} className="flex items-center justify-center p-2 flex-col">
-                            <Label htmlFor="file" className="text-lg">Select CSV File</Label>
-                            <Input type="file" id="file" name="file" accept=".csv" />
+                            <Label htmlFor="predictFile" className="text-lg">Select CSV File for Prediction</Label>
+                            <Input type="file" id="predictFile" name="predictFile" accept=".csv" />
                             <Button type="submit" className="mt-4">Upload Dataset for Prediction</Button>
                         </form>
                     </div>
@@ -198,8 +178,10 @@ const Application = () => {
                 <br />
                 {predictions && (
                     <section className="flex items-center justify-center p-15 flex-col">
-                        <h1 className="text-2xl font-bold">Predictions</h1>
-                        <p>Predictions: {predictions}</p>
+                    <h1 className="text-2xl font-bold">Predictions</h1>
+                            {predictions.map((prediction, index) => (
+                            <p key={index}>{prediction}</p>
+                          ))}
                     </section>
                 )}
                 <br />

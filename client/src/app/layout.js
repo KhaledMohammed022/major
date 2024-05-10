@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
             {children}
           </ThemeProvider>
           <Toaster />
-          <BackgroundBeams />
+      {/* <BackgroundBeams /> */}
         </body>
       </html>
     </ClerkProvider>

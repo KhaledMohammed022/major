@@ -1,168 +1,98 @@
-from flask import request, jsonify, send_file
+from flask import Flask, request, jsonify
 import pandas as pd
-import io
-import logging
-from flask import Flask
-from flask_cors import CORS
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from werkzeug.utils import secure_filename
+import os
+import io
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-logging.basicConfig(level=logging.INFO)
-
+# Global variables
 dataset = None
-classifiers = {'lr': None, 'dt': None, 'rf': None}
+X_train = None
+X_test = None
+y_train = None
+y_test = None
+classifier = None
+best_classifier = None
+best_accuracy = 0
+best_classifier_name = None
 
 @app.route('/api/upload', methods=['POST'])
-def upload_dataset():
+def upload():
     global dataset
-    file = request.files.get('file')
-
-    if not file or file.filename == '':
-        logging.error('No file uploaded or empty filename')
-        return jsonify({'error': 'No file uploaded or empty filename'})
-
+    file = request.files['file']
     dataset = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    dataset = dataset.dropna()
-    return jsonify({'message': 'Dataset uploaded successfully'})
+    return jsonify({'message': 'Dataset uploaded successfully'}), 200
 
 @app.route('/api/preprocess', methods=['POST'])
-def preprocess_dataset():
-    global dataset
-    if dataset is None:
-        logging.error('Dataset not uploaded yet')
-        return jsonify({'error': 'Dataset not uploaded yet'})
-
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-
-    return jsonify({
-        'message': 'Dataset preprocessed successfully',
-        'train_samples': X_train.shape[0],
-        'test_samples': X_test.shape[0]
-    })
-
-def train_model(model, model_name):
-    global dataset, classifiers
-    if dataset is None:
-        logging.error('Dataset not uploaded or preprocessed yet')
-        return jsonify({'error': 'Dataset not uploaded or preprocessed yet'})
-
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-
-    model.fit(X_train, y_train)
-    classifiers[model_name] = model
-
-    predict = model.predict(X_test)
-    acc = accuracy_score(y_test, predict) * 100
-    p = precision_score(y_test, predict, average='macro') * 100
-    r = recall_score(y_test, predict, average='macro') * 100
-    f = f1_score(y_test, predict, average='macro') * 100
-
-    return jsonify({
-        'message': f'{model_name.capitalize()} model trained successfully',
-        'accuracy_score': acc,
-        'precision_score': p,
-        'recall_score': r,
-        'f1_score': f
-    })
+def preprocess():
+    global dataset, X_train, X_test, y_train, y_test
+    dataset = dataset.values
+    X = dataset[:,0:dataset.shape[1]-1]
+    Y = dataset[:,dataset.shape[1]-1]
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+    return jsonify({'message': 'Dataset preprocessed', 'train_samples': len(X_train), 'test_samples': len(X_test)}), 200
 
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
-    lr = LogisticRegression()
-    return train_model(lr, 'lr')
+    global X_train, y_train, X_test, y_test, classifier, best_classifier,best_classifier_name, best_accuracy
+    classifier = LogisticRegression()
+    classifier.fit(X_train, y_train)
+    predict = classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, predict) * 100
+    precision = precision_score(y_test, predict, average='macro') * 100
+    recall = recall_score(y_test, predict, average='macro') * 100
+    f1 = f1_score(y_test, predict, average='macro') * 100
+
+    if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        best_classifier = classifier
+        best_classifier_name = 'Logistic Regression'
+
+    return jsonify({'message': 'Logistic Regression model trained', 'accuracy_score': accuracy, 'precision_score': precision, 'recall_score': recall, 'f1_score': f1}), 200
 
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
-    dt = DecisionTreeClassifier(criterion='entropy', splitter='random', max_depth=20,
-                                min_samples_split=50, min_samples_leaf=20)
-    return train_model(dt, 'dt')
+    global X_train, y_train, X_test, y_test, classifier, best_classifier, best_accuracy,best_classifier_name
+    classifier = DecisionTreeClassifier(criterion = "entropy", splitter = "random", max_depth = 20,  min_samples_split = 50, min_samples_leaf = 20)
+    classifier.fit(X_train, y_train)
+    predict = classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, predict) * 100
+    precision = precision_score(y_test, predict, average='macro') * 100
+    recall = recall_score(y_test, predict, average='macro') * 100
+    f1 = f1_score(y_test, predict, average='macro') * 100
 
-@app.route('/api/train/rf', methods=['POST'])
-def train_rf():
-    rf = RandomForestClassifier(n_estimators=10, criterion="entropy")
-    return train_model(rf, 'rf')
+    if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        best_classifier = classifier
+        best_classifier_name = 'Decision Tree'
 
-def predict(model_name, test_data):
-    global classifiers, dataset
-    if classifiers[model_name] is None:
-        logging.error('Model not trained yet')
-        return jsonify({'error': 'Model not trained yet'})
+    return jsonify({'message': 'Decision Tree model trained', 'accuracy_score': accuracy, 'precision_score': precision, 'recall_score': recall, 'f1_score': f1}), 200
 
-    # Align the columns in the test data with the columns in the training data
-    test_data = test_data.reindex(columns=dataset.columns, fill_value=0)
+@app.route('/api/predict', methods=['POST'])
+def predict():
+    global best_classifier, best_classifier_name
+    file = request.files['file']
+    test = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
+    test_data = test.values
 
-    predictions = classifiers[model_name].predict(test_data)
-    return jsonify({'predictions': predictions.tolist()})
+    predictions = best_classifier.predict(test_data)
 
-@app.route('/api/predict/lr', methods=['POST'])
-def predict_lr():
-    file = request.files.get('file')
-    if not file or file.filename == '':
-        logging.error('No file uploaded or empty filename')
-        return jsonify({'error': 'No file uploaded or empty filename'})
+    formatted_predictions = []
+    for i, pred in enumerate(predictions):
+        if pred == 0:
+            formatted_predictions.append(f"{test_data[i]} Resources are available. Task can be scheduled\n")
+        else:
+            formatted_predictions.append(f"{test_data[i]} Resources are NOT available. Task can be scheduled after freeing resources\n")
 
-    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    test_data = test_data.dropna()
-    return predict('lr', test_data)
-
-@app.route('/api/predict/dt', methods=['POST'])
-def predict_dt():
-    file = request.files.get('file')
-    if not file or file.filename == '':
-        logging.error('No file uploaded or empty filename')
-        return jsonify({'error': 'No file uploaded or empty filename'})
-
-    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    test_data = test_data.dropna()
-    return predict('dt', test_data)
-
-@app.route('/api/predict/rf', methods=['POST'])
-def predict_rf():
-    file = request.files.get('file')  # Get the file from the request
-    if not file or file.filename == '':
-        logging.error('No file uploaded or empty filename')
-        return jsonify({'error': 'No file uploaded or empty filename'})
-
-    test_data = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
-    test_data = test_data.dropna()  # Remove any rows with missing values
-
-    # Log the column names of the prediction dataset
-    logging.info('Column names of prediction dataset: %s', test_data.columns)
-
-    try:
-        predictions = classifiers['rf'].predict(test_data)
-
-        result = []
-        for i in range(len(predictions)):
-            if predictions[i] == 0:
-                result.append(f'Resources are available. Task can be scheduled: {test_data.iloc[i]}')
-            else:
-                result.append(f'Resources are NOT available. Task can be scheduled after freeing resources: {test_data.iloc[i]}')
-
-        return jsonify({'predictions': result})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-@app.errorhandler(404)
-def not_found_error(error):
-    logging.error('Not Found: %s', request.url)
-    return jsonify({'error': 'Not Found'}), 404
-
-@app.errorhandler(500)
-def internal_error(error):
-    logging.error('Internal Server Error: %s', error)
-    return jsonify({'error': 'Internal Server Error'}), 500
-
+    message = f'Prediction completed using {best_classifier_name}'
+    return jsonify({'message': message, 'predictions': formatted_predictions}), 200
 if __name__ == '__main__':
     app.run(debug=True)
