@@ -6,7 +6,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from werkzeug.utils import secure_filename
-import os
 import io
 from flask_cors import CORS
 
@@ -23,6 +22,7 @@ classifier = None
 best_classifier = None
 best_accuracy = 0
 best_classifier_name = None
+model_metrics = {}  # Dictionary to store the metrics of each model
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
@@ -42,7 +42,7 @@ def preprocess():
 
 @app.route('/api/train/lr', methods=['POST'])
 def train_lr():
-    global X_train, y_train, X_test, y_test, classifier, best_classifier,best_classifier_name, best_accuracy
+    global X_train, y_train, X_test, y_test, classifier, best_classifier, best_classifier_name, best_accuracy, model_metrics
     classifier = LogisticRegression()
     classifier.fit(X_train, y_train)
     predict = classifier.predict(X_test)
@@ -50,6 +50,9 @@ def train_lr():
     precision = precision_score(y_test, predict, average='macro') * 100
     recall = recall_score(y_test, predict, average='macro') * 100
     f1 = f1_score(y_test, predict, average='macro') * 100
+
+    # Store the metrics
+    model_metrics['Logistic Regression'] = {'accuracy': accuracy, 'precision': precision, 'recall': recall, 'f1': f1}
 
     if accuracy > best_accuracy:
         best_accuracy = accuracy
@@ -60,7 +63,7 @@ def train_lr():
 
 @app.route('/api/train/dt', methods=['POST'])
 def train_dt():
-    global X_train, y_train, X_test, y_test, classifier, best_classifier, best_accuracy,best_classifier_name
+    global X_train, y_train, X_test, y_test, classifier, best_classifier, best_accuracy, best_classifier_name, model_metrics
     classifier = DecisionTreeClassifier(criterion = "entropy", splitter = "random", max_depth = 20,  min_samples_split = 50, min_samples_leaf = 20)
     classifier.fit(X_train, y_train)
     predict = classifier.predict(X_test)
@@ -69,12 +72,20 @@ def train_dt():
     recall = recall_score(y_test, predict, average='macro') * 100
     f1 = f1_score(y_test, predict, average='macro') * 100
 
+    # Store the metrics
+    model_metrics['Decision Tree'] = {'accuracy': accuracy, 'precision': precision, 'recall': recall, 'f1': f1}
+
     if accuracy > best_accuracy:
         best_accuracy = accuracy
         best_classifier = classifier
         best_classifier_name = 'Decision Tree'
 
     return jsonify({'message': 'Decision Tree model trained', 'accuracy_score': accuracy, 'precision_score': precision, 'recall_score': recall, 'f1_score': f1}), 200
+
+@app.route('/api/metrics', methods=['GET'])
+def get_metrics():
+    global model_metrics
+    return jsonify(model_metrics), 200
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
@@ -94,5 +105,6 @@ def predict():
 
     message = f'Prediction completed using {best_classifier_name}'
     return jsonify({'message': message, 'predictions': formatted_predictions}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
