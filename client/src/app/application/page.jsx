@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
@@ -21,15 +21,17 @@ const Application = () => {
 
     const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
     const [data, setData] = useState({});
+    const chartRef = useRef(null);
 
     const options = {
         animation: {
+            // Add animation options for the bars
             tension: {
-                duration: 1000,
-                easing: 'easeInOutCubic',
-                from: 0, // Animate from bottom (0 means bottom)
-                to: 1, // Animate to top (1 means top)
-                loop: true
+                duration: 1000, // Animation duration in milliseconds
+                easing: 'easeInOutCubic', // Easing function for the animation
+                from: 1, // Starting scale (1 means fully expanded)
+                to: 0, // Ending scale (0 means fully collapsed)
+                loop: true // Repeat the animation
             }
         },
         scales: {
@@ -43,7 +45,7 @@ const Application = () => {
         responsive: true,
     };
 
-    const handleClick = async () => {
+    const fetchData = async () => {
         try {
             const response = await axios.get(`${apiServerUrl}/api/metrics`);
             if (response.status !== 200) {
@@ -85,10 +87,17 @@ const Application = () => {
                     borderWidth: 1
                 }]
             });
+
+            // Trigger animation after data is fetched
+            console.log(chartRef.current)
+            if (chartRef.current) {
+                chartRef.current.chartInstance.update();
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -275,7 +284,7 @@ const Application = () => {
                     )}
                     <br/>
                     {/* Button to fetch data and trigger animations */}
-                    <Button onClick={handleClick}>Fetch Data</Button>
+                    <Button onClick={fetchData}>Fetch Data</Button>
             </div>
             </section>
         </div>
