@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { Bar } from 'react-chartjs-2';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,38 @@ const Application = () => {
     const { toast } = useToast();
 
     const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
+
+    const [data, setData] = useState({});
+    const [fetchData, setFetchData] = useState(false);
+
+    const handleClick = () => {
+        fetch('/api/graph')
+            .then(response => response.json())
+            .then(metrics => {
+                const labels = Object.keys(metrics);
+                const accuracyData = labels.map(label => metrics[label].accuracy);
+                const f1Data = labels.map(label => metrics[label].f1);
+                // Other metrics...
+
+                setData({
+                    labels: labels,
+                    datasets: [{
+                        label: 'Accuracy',
+                        data: accuracyData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'F1 Score',
+                        data: f1Data,
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                });
+                setFetchData(true);
+            });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -134,7 +167,7 @@ const Application = () => {
     
 
     return (
-        <>
+        <div className='relative z-10'>
             <section className="flex items-center justify-center p-20 flex-col">
                 <h1 className="text-4xl font-bold">Application</h1>
             </section>
@@ -149,6 +182,21 @@ const Application = () => {
                         <Button onClick={handlePreprocess} className="mt-4">Preprocess Dataset</Button>
                         <Button onClick={handleTrainLR} className="mt-4">Train Logistic Regression</Button>
                         <Button onClick={handleTrainDT} className="mt-4">Train Decision Tree</Button>
+                        <br/>
+                        <h2>Model Comparison</h2>
+                        <Button onClick={handleClick}>Fetch Data</Button>
+                        {fetchData && (
+                            <Bar
+                                data={data}
+                                options={{
+                                    scales: {
+                                        y: {
+                                        beginAtZero: true
+                                         }
+                                        }
+                                    }}
+                                     />
+                        )}   
                         <form onSubmit={handlePredict} className="flex items-center justify-center p-2 flex-col">
                             <Label htmlFor="predictFile" className="text-lg">Select CSV File for Prediction</Label>
                             <Input type="file" id="predictFile" name="predictFile" accept=".csv" />
@@ -191,7 +239,7 @@ const Application = () => {
                 </section>
                 </div>
             </section>
-        </>
+        </div>
     );
 }
 
