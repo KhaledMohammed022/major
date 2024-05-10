@@ -208,31 +208,6 @@ const Application = () => {
                     </div>
                 </section>
                 <div>
-                <h2>Model Comparison</h2>
-                        <Button onClick={handleClick}>Fetch Data</Button>
-                        <br/>
-                        <br />
-                            {data.labels && (
-                                <Bar className='bg-white'
-                                    data={data}
-                                    width={600}
-                                    height={400}
-                                    options={{
-                                        scales: {
-                                            yAxes: [{
-                                                type: 'linear', // Specify the scale type as 'linear'
-                                                ticks: {
-                                                    beginAtZero: true,
-                                                },
-                                            }],
-                                        },
-                                        // maintainAspectRatio: false, // Prevent maintaining aspect ratio
-                                        responsive: true, // Make the chart responsive
-                                    }}
-                                />
-                            )}
-                </div>
-                <div>
                 {trainSamples && (
                     <section className="flex items-center justify-center p-15 flex-col">
                         <h1 className="text-2xl font-bold">Training Samples</h1>
@@ -265,6 +240,31 @@ const Application = () => {
                     <h1 className="text-2xl font-bold">Output</h1>
                     <p>Message: {message}</p>
                 </section>
+                </div>
+                <div>
+                <h2>Model Comparison</h2>
+                        <Button onClick={handleClick}>Fetch Data</Button>
+                        <br/>
+                        <br />
+                            {data.labels && (
+                                <Bar className='bg-white'
+                                    data={data}
+                                    width={600}
+                                    height={400}
+                                    options={{
+                                        scales: {
+                                            yAxes: [{
+                                                type: 'linear', // Specify the scale type as 'linear'
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                },
+                                            }],
+                                        },
+                                        // maintainAspectRatio: false, // Prevent maintaining aspect ratio
+                                        responsive: true, // Make the chart responsive
+                                    }}
+                                />
+                            )}
                 </div>
             </section>
         </div>
