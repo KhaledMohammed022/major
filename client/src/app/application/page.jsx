@@ -22,10 +22,30 @@ const Application = () => {
     const apiServerUrl = 'https://major-gjhv.onrender.com'; // Your API server URL
     const [data, setData] = useState({});
 
+    const options = {
+        animation: {
+            tension: {
+                duration: 1000,
+                easing: 'easeInOutCubic',
+                from: 0, // Animate from bottom (0 means bottom)
+                to: 1, // Animate to top (1 means top)
+                loop: true
+            }
+        },
+        scales: {
+            yAxes: [{
+                type: 'linear',
+                ticks: {
+                    beginAtZero: true,
+                },
+            }],
+        },
+        responsive: true,
+    };
+
     const handleClick = async () => {
         try {
             const response = await axios.get(`${apiServerUrl}/api/metrics`);
-
             if (response.status !== 200) {
                 throw new Error('Failed to fetch data');
             }
@@ -42,26 +62,26 @@ const Application = () => {
                 datasets: [{
                     label: 'Accuracy',
                     data: accuracyData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(29, 53, 87, 0.6)', // Darker shade for Accuracy
+                    borderColor: 'rgba(29, 53, 87, 1)',
                     borderWidth: 1
                 }, {
                     label: 'Precision',
                     data: precisionData,
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(129, 178, 154, 0.6)', // Darker shade for Precision
+                    borderColor: 'rgba(129, 178, 154, 1)',
                     borderWidth: 1
                 }, {
                     label: 'Recall',
                     data: recallData,
-                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                    borderColor: 'rgba(255, 159, 64, 1)',
+                    backgroundColor: 'rgba(210, 215, 211, 0.6)', // Darker shade for Recall
+                    borderColor: 'rgba(210, 215, 211, 1)',
                     borderWidth: 1
                 }, {
                     label: 'F1 Score',
                     data: f1Data,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(249, 202, 36, 0.6)', // Darker shade for F1 Score
+                    borderColor: 'rgba(249, 202, 36, 1)',
                     borderWidth: 1
                 }]
             });
@@ -242,30 +262,21 @@ const Application = () => {
                 </section>
                 </div>
                 <div>
-                <h2>Model Comparison</h2>
-                        <Button onClick={handleClick}>Fetch Data</Button>
-                        <br/>
-                        <br />
-                            {data.labels && (
-                                <Bar className='bg-white'
-                                    data={data}
-                                    width={600}
-                                    height={400}
-                                    options={{
-                                        scales: {
-                                            yAxes: [{
-                                                type: 'linear', // Specify the scale type as 'linear'
-                                                ticks: {
-                                                    beginAtZero: true,
-                                                },
-                                            }],
-                                        },
-                                        // maintainAspectRatio: false, // Prevent maintaining aspect ratio
-                                        responsive: true, // Make the chart responsive
-                                    }}
-                                />
-                            )}
-                </div>
+                    <h1 className='text-2xl font-bold'>Model Comparison</h1>
+                    <br/>
+                    {/* Your chart rendering */}
+                    {data.labels && (
+                        <Bar
+                            data={data}
+                            options={options}
+                            width={600}
+                            height={400}
+                        />
+                    )}
+                    <br/>
+                    {/* Button to fetch data and trigger animations */}
+                    <Button onClick={handleClick}>Fetch Data</Button>
+            </div>
             </section>
         </div>
     );
