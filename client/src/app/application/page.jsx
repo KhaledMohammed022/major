@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast"
 import axios from 'axios';
+import Chart from 'chart.js/auto';
+import { CategoryScale } from 'chart.js';
+
+Chart.register(CategoryScale);
+
 
 const Application = () => {
     const [message, setMessage] = useState('');

@@ -107,4 +107,4 @@ def predict():
     return jsonify({'message': message, 'predictions': formatted_predictions}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000)  
