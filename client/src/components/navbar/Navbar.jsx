@@ -29,7 +29,7 @@ const Navbar = () => {
             </li>
             {user? <>
               <li>
-                <Link href="/application">Application</Link>
+                <Link href="/model">Model</Link>
               </li>
             </>:
             <>

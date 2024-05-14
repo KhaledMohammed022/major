@@ -8,11 +8,14 @@ import { useToast } from "@/components/ui/use-toast"
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 import { CategoryScale } from 'chart.js';
-
+import { motion } from 'framer-motion';
+import { LampContainer } from '@/components/ui/lamp';   
+import { Vortex } from '@/components/ui/vortex';
+import { SparklesCore } from '@/components/ui/sparkles';
 Chart.register(CategoryScale);
 
 
-const Application = () => {
+const Model = () => {
     const [message, setMessage] = useState('');
     const [trainSamples, setTrainSamples] = useState('');
     const [testSamples, setTestSamples] = useState('');
@@ -68,8 +71,8 @@ const Application = () => {
                 datasets: [{
                     label: 'Accuracy',
                     data: accuracyData,
-                    backgroundColor: 'rgba(29, 53, 87, 0.6)', // Darker shade for Accuracy
-                    borderColor: 'rgba(29, 53, 87, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue shade with transparency
+                    borderColor: 'rgba(54, 162, 235, 1)', // Solid blue color
                     borderWidth: 1
                 }, {
                     label: 'Precision',
@@ -218,10 +221,30 @@ const Application = () => {
     
 
     return (
-        <div className='relative z-10'>
+        <div className='relative z-10'> 
             <section className="flex items-center justify-center p-20 flex-col">
-                <h1 className="text-4xl font-bold">Application</h1>
+            <LampContainer>
+                <motion.h1
+                    initial={{ opacity: 0.5, y: 100 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{
+                    delay: 0.3,
+                    duration: 0.8,
+                    ease: "easeInOut",
+                    }}
+                    className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
+                >
+                ML Model
+                </motion.h1>
+                </LampContainer>
             </section>
+            <Vortex
+                backgroundColor="transparent"
+                rangeY={800}
+                particleCount={500}
+                baseHue={120}
+                className="flex items-center flex-col justify-center px-2 md:px-10  py-4 w-full h-full"
+              >
             <section className="flex flex-wrap justify-around">
                 <section className='flex items-center justify-center p-15 '>    
                     <div className='flex items-center justify-center p-15 flex-col'>
@@ -291,8 +314,9 @@ const Application = () => {
                     <Button onClick={fetchData}>Fetch Data</Button>
             </div>
             </section>
+            </Vortex>
         </div>
     );
 }
 
-export default Application;
+export default Model;
