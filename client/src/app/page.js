@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { LampContainer } from "@/components/ui/lamp";
 import { motion } from "framer-motion";
-import {TypewriterEffectSmooth} from "@/components/ui/typewritter-effect";
 export default function Home() {
   const { user } = useUser();
 
