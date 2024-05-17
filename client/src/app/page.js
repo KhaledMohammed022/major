@@ -1,24 +1,216 @@
 "use client";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
 import { LampContainer } from "@/components/ui/lamp";
 import { motion } from "framer-motion";
+import { TypewriterEffect, TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+
 export default function Home() {
-  const { user } = useUser();
-  
+  const aboutWords = [
+    { text: "The" },
+    { text: "web" },
+    { text: "application" },
+    { text: "facilitates" },
+    { text: "the" },
+    { text: "scheduling" },
+    { text: "of" },
+    { text: "tasks" },
+    { text: "on" },
+    { text: "cloud" },
+    { text: "datasets" },
+    { text: "using" },
+    { text: "two" },
+    { text: "prominent" },
+    { text: "machine" },
+    { text: "learning" },
+    { text: "algorithms:" },
+    { text: "Logistic", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Regression", className: "text-blue-500 dark:text-blue-500" },
+    { text: "and" },
+    { text: "Decision", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Tree.", className: "text-blue-500 dark:text-blue-500" },
+    { text: "These" },
+    { text: "algorithms" },
+    { text: "are" },
+    { text: "employed" },
+    { text: "to" },
+    { text: "predict" },
+    { text: "the" },
+    { text: "availability" },
+    { text: "of" },
+    { text: "resources" },
+    { text: "for" },
+    { text: "scheduling" },
+    { text: "tasks," },
+    { text: "thus" },
+    { text: "enabling" },
+    { text: "users" },
+    { text: "to" },
+    { text: "make" },
+    { text: "informed" },
+    { text: "decisions" },
+    { text: "regarding" },
+    { text: "task" },
+    { text: "allocation." },
+    { text: "The" },
+    { text: "application" },
+    { text: "provides" },
+    { text: "key" },
+    { text: "performance" },
+    { text: "metrics" },
+    { text: "such" },
+    { text: "as" },
+    { text: "accuracy," },
+    { text: "precision," },
+    { text: "and" },
+    { text: "F1" },
+    { text: "score" },
+    { text: "for" },
+    { text: "both" },
+    { text: "algorithms," },
+    { text: "empowering" },
+    { text: "users" },
+    { text: "to" },
+    { text: "evaluate" },
+    { text: "their" },
+    { text: "effectiveness" },
+    { text: "in" },
+    { text: "real-world" },
+    { text: "scenarios." },
+  ];
+
+  const userFriendlyDesign = [
+    { text: "User-Friendly" },
+    { text: "Design:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "A" },
+    { text: "sleek," },
+    { text: "intuitive" },
+    { text: "web" },
+    { text: "application" },
+    { text: "that" },
+    { text: "simplifies" },
+    { text: "complex" },
+    { text: "machine" },
+    { text: "learning" },
+    { text: "operations." },
+  ];
+
+  const comprehensiveEvaluation = [
+    { text: "Comprehensive" },
+    { text: "Algorithmic" },
+    { text: "Evaluation:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Employs" },
+    { text: "the" },
+    { text: "analytical" },
+    { text: "strengths" },
+    { text: "of" },
+    { text: "Logistic" },
+    { text: "Regression" },
+    { text: "and" },
+    { text: "Decision" },
+    { text: "Tree" },
+    { text: "algorithms" },
+    { text: "for" },
+    { text: "nuanced" },
+    { text: "task" },
+    { text: "scheduling" },
+    { text: "insights." },
+  ];
+
+  const quantitativeMetrics = [
+    { text: "Quantitative" },
+    { text: "Metrics" },
+    { text: "Display:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Showcases" },
+    { text: "accuracy," },
+    { text: "precision," },
+    { text: "and" },
+    { text: "F1" },
+    { text: "score" },
+    { text: "metrics," },
+    { text: "enabling" },
+    { text: "users" },
+    { text: "to" },
+    { text: "make" },
+    { text: "informed" },
+    { text: "decisions" },
+    { text: "based" },
+    { text: "on" },
+    { text: "algorithm" },
+    { text: "performance." },
+  ];
+
+  const predictiveResourceManagement = [
+    { text: "Predictive" },
+    { text: "Resource" },
+    { text: "Management:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Offers" },
+    { text: "reliable" },
+    { text: "predictions" },
+    { text: "on" },
+    { text: "resource" },
+    { text: "allocation," },
+    { text: "facilitating" },
+    { text: "smoother" },
+    { text: "cloud" },
+    { text: "operations." },
+  ];
+
+  const graphicalDataRepresentation = [
+    { text: "Graphical" },
+    { text: "Data" },
+    { text: "Representation:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Provides" },
+    { text: "bar" },
+    { text: "graphs" },
+    { text: "for" },
+    { text: "immediate" },
+    { text: "visual" },
+    { text: "comparison" },
+    { text: "of" },
+    { text: "algorithm" },
+    { text: "outcomes." },
+    { text: "Cloud" },
+    { text: "Dataset" },
+    { text: "Specialization:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Tailored" },
+    { text: "specifically" },
+    { text: "for" },
+    { text: "cloud" },
+    { text: "computing" },
+    { text: "datasets" },
+    { text: "to" },
+    { text: "ensure" },
+    { text: "maximum" },
+    { text: "relevance" },
+    { text: "and" },
+    { text: "efficiency." },
+  ];
+
+  const maximizedModelPotential = [
+    { text: "Maximized" },
+    { text: "Model" },
+    { text: "Potential:", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Enables" },
+    { text: "users" },
+    { text: "to" },
+    { text: "leverage" },
+    { text: "the" },
+    { text: "full" },
+    { text: "capabilities" },
+    { text: "of" },
+    { text: "the" },
+    { text: "machine" },
+    { text: "learning" },
+    { text: "model" },
+    { text: "for" },
+    { text: "superior" },
+    { text: "cloud" },
+    { text: "resource" },
+    { text: "scheduling." },
+  ];
+
   return (
     <main className="flex items-center justify-center p-20 flex-col">
-      {user ? null : (
-        <Link
-          href={"/sign-up"}
-          className="relative inline-flex h-10 overflow-hidden rounded-full p-[2px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-        >
-          <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-          <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-            Sign up
-          </span>
-        </Link>
-      )}
       <LampContainer id="about">
         <motion.h1
           initial={{ opacity: 0.5, y: 100 }}
@@ -33,6 +225,30 @@ export default function Home() {
           About The Project
         </motion.h1>
       </LampContainer>
+      <TypewriterEffect
+        words={[
+          { text: "Abstract",className : "text-blue-500 dark:text-blue-500"},
+        ]}
+      />
+      <TypewriterEffect words={aboutWords} className="mb-1" />
+      <TypewriterEffectSmooth words={userFriendlyDesign} className="mb-1" />
+      <TypewriterEffectSmooth
+        words={comprehensiveEvaluation}
+        className="mb-1"
+      />
+      <TypewriterEffectSmooth words={quantitativeMetrics} className="mb-1" />
+      <TypewriterEffectSmooth
+        words={predictiveResourceManagement}
+        className="mb-1"
+      />
+      <TypewriterEffectSmooth
+        words={graphicalDataRepresentation}
+        className="mb-1"
+      />
+      <TypewriterEffectSmooth
+        words={maximizedModelPotential}
+        className="mb-1"
+      />
     </main>
   );
 }
