@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -42,14 +42,9 @@ const Model = () => {
       },
     },
     scales: {
-      yAxes: [
-        {
-          type: "linear",
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
+      y: {
+        beginAtZero: true,
+      },
     },
     responsive: true,
   };
@@ -74,30 +69,38 @@ const Model = () => {
           {
             label: "Accuracy",
             data: accuracyData,
+            fill: false,
             backgroundColor: "rgba(54, 162, 235, 0.6)", // Blue shade with transparency
             borderColor: "rgba(54, 162, 235, 1)", // Solid blue color
             borderWidth: 1,
+            tension: 0.4,
           },
           {
             label: "Precision",
             data: precisionData,
+            fill: false,
             backgroundColor: "rgba(129, 178, 154, 0.6)", // Darker shade for Precision
             borderColor: "rgba(129, 178, 154, 1)",
             borderWidth: 1,
+            tension: 0.4,
           },
           {
             label: "Recall",
             data: recallData,
+            fill: false,
             backgroundColor: "rgba(210, 215, 211, 0.6)", // Darker shade for Recall
             borderColor: "rgba(210, 215, 211, 1)",
             borderWidth: 1,
+            tension: 0.4,
           },
           {
             label: "F1 Score",
             data: f1Data,
+            fill: false,
             backgroundColor: "rgba(249, 202, 36, 0.6)", // Darker shade for F1 Score
             borderColor: "rgba(249, 202, 36, 1)",
             borderWidth: 1,
+            tension: 0.4,
           },
         ],
       });
@@ -297,8 +300,8 @@ const Model = () => {
             {trainSamples && (
               <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Training Samples</h1>
-                <p>Train Samples: {trainSamples}</p>
-                <p>Test Samples: {testSamples}</p>
+                <p className="text-xl">Train Samples: {trainSamples}</p>
+                <p className="text-xl">Test Samples: {testSamples}</p>
               </section>
             )}
             <br />
@@ -308,29 +311,29 @@ const Model = () => {
                 <h3>{message}</h3>
                 <TypewriterEffect
                   words={[
-                    { text: `Accuracy: `, className: "" },
-                    { text:` ${accuracy}`, className: "text-blue-500 dark:text-blue-500",}
+                    { text: `Accuracy: `, className: "text-xl" },
+                    { text:` ${accuracy}`, className: "text-xl text-blue-500 dark:text-blue-500",}
                   ]}
                   className="mb-1"
                 />
                 <TypewriterEffect
                   words={[
-                    { text: `Precision: `, className: "" },
-                    { text:` ${precision}`, className: "text-blue-500 dark:text-blue-500",}
+                    { text: `Precision: `, className: "text-xl" },
+                    { text:` ${precision}`, className: "text-xl text-blue-500 dark:text-blue-500",}
                   ]}
                   className="mb-1"
                 />
                 <TypewriterEffect
                   words={[
-                    { text: `Recall: `, className: "" },
-                    { text:` ${recall}`, className: "text-blue-500 dark:text-blue-500",}
+                    { text: `Recall: `, className: "text-xl" },
+                    { text:` ${recall}`, className: "text-xl text-blue-500 dark:text-blue-500",}
                   ]}
                   className="mb-1"
                 />
                 <TypewriterEffect
                   words={[
-                    { text: `F1 Score: `, className: "" },
-                    { text:` ${f1Score}`, className: "text-blue-500 dark:text-blue-500",}
+                    { text: `F1 Score: `, className: "text-xl" },
+                    { text:` ${f1Score}`, className: "text-xl text-blue-500 dark:text-blue-500",}
                   ]}
                   className="mb-1"
                 />
@@ -356,7 +359,7 @@ const Model = () => {
             <br />
             {/* Your chart rendering */}
             {data.labels && (
-              <Bar data={data} options={options} width={600} height={400} ref={chartRef} />
+              <Line data={data} options={options} width={600} height={400} ref={chartRef} />
             )}
             <br />
             {/* Button to fetch data and trigger animations */}

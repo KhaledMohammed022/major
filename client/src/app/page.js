@@ -2,7 +2,10 @@
 import Link from "next/link";
 import { LampContainer } from "@/components/ui/lamp";
 import { motion } from "framer-motion";
-import { TypewriterEffect, TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import {
+  TypewriterEffect,
+  TypewriterEffectSmooth,
+} from "@/components/ui/typewriter-effect";
 
 export default function Home() {
   const aboutWords = [
@@ -220,33 +223,71 @@ export default function Home() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
+          className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-5xl font-medium tracking-tight text-transparent md:text-8xl"
         >
           About The Project
         </motion.h1>
       </LampContainer>
       <TypewriterEffect
         words={[
-          { text: "Abstract",className : "text-blue-500 dark:text-blue-500"},
+          {
+            text: "Abstract",
+            className: "text-blue-500 dark:text-blue-500 text-2xl md:text-2xl",
+          },
         ]}
       />
-      <TypewriterEffect words={aboutWords} className="mb-1" />
-      <TypewriterEffectSmooth words={userFriendlyDesign} className="mb-1" />
-      <TypewriterEffectSmooth
-        words={comprehensiveEvaluation}
+      <TypewriterEffect
+        words={userFriendlyDesign.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
         className="mb-1"
       />
-      <TypewriterEffectSmooth words={quantitativeMetrics} className="mb-1" />
-      <TypewriterEffectSmooth
-        words={predictiveResourceManagement}
+      <TypewriterEffect
+        words={comprehensiveEvaluation.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
         className="mb-1"
       />
-      <TypewriterEffectSmooth
-        words={graphicalDataRepresentation}
+      <TypewriterEffect
+        words={quantitativeMetrics.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
         className="mb-1"
       />
-      <TypewriterEffectSmooth
-        words={maximizedModelPotential}
+      <TypewriterEffect
+        words={predictiveResourceManagement.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
+        className="mb-1"
+      />
+      <TypewriterEffect
+        words={graphicalDataRepresentation.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
+        className="mb-1 "
+      />
+      <TypewriterEffect
+        words={maximizedModelPotential.map((word) => ({
+          ...word,
+          className: word.className
+            ? `${word.className} text-2xl md:text-2xl`
+            : "text-2xl md:text-2xl",
+        }))}
         className="mb-1"
       />
     </main>
