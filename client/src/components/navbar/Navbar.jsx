@@ -1,4 +1,3 @@
-'use client'
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -62,8 +61,9 @@ const Navbar = () => {
                     <TypewriterEffectSmooth className='flex flex-wrap' words={words} />
                 )}
             </aside>
-            <nav className="absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] hidden md:block">
-                <ul className="flex items-center gap-4 list-none">
+            {/* Move the navigation elements to the right */}
+            <nav className="flex items-center gap-4 list-none ml-auto">
+                <ul className="flex items-center gap-4">
                     <li>
                         <Link href="/#about">About The Project</Link>
                     </li>
