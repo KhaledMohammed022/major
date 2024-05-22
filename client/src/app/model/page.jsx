@@ -42,9 +42,15 @@ const Model = () => {
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-      },
+      yAxes: [
+        {
+          type: "linear",
+          ticks: {
+            beginAtZero: true,
+            stepSize:5,
+          },
+        },
+      ],
     },
     responsive: true,
   };
@@ -293,7 +299,7 @@ const Model = () => {
               <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Training Samples</h1>
                 <p className="text-xl">Train Samples: {trainSamples}</p>
-                <p className="text-xl">Test Samples: {testSamples}</p>
+                <p className="texl-xl">Test Samples: {testSamples}</p>
               </section>
             )}
             <br />
@@ -351,13 +357,8 @@ const Model = () => {
             <br />
             {/* Your chart rendering */}
             {data.labels && (
-              <Bar
-                data={data}
-                options={options}
-                width={600}
-                height={400}
-                ref={chartRef}
-              />            )}
+              <Bar data={data} options={options} width={600} height={400} ref={chartRef} />
+            )}
             <br />
             {/* Button to fetch data and trigger animations */}
             <Button onClick={fetchData}>Fetch Data</Button>
