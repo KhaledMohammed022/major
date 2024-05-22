@@ -42,24 +42,15 @@ const Model = () => {
       },
     },
     scales: {
-      xAxes: [
-        {
-          type: "linear", // Explicitly set the X-axis type to linear
-          ticks: {
-            beginAtZero: true,
-            stepSize: 5, // Set the desired step size
-          },
+      yAxes: [{
+        type:"linear",
+        ticks: {
+          maxTicksLimit: 5,
+          suggestedMin: 75,
+          suggestedMax: 100,
+          stepSize: 5,
         },
-      ],
-      yAxes: [
-        {
-          type: "linear", // Assuming your y-axis is linear
-          ticks: {
-            beginAtZero: true,
-            stepSize: 5, // Set the desired step size for the y-axis
-          },
-        },
-      ],
+      }]
     },
     responsive: true,
   };
