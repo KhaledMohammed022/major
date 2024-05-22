@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -69,38 +69,30 @@ const Model = () => {
           {
             label: "Accuracy",
             data: accuracyData,
-            fill: false,
             backgroundColor: "rgba(54, 162, 235, 0.6)", // Blue shade with transparency
             borderColor: "rgba(54, 162, 235, 1)", // Solid blue color
             borderWidth: 1,
-            tension: 0.4,
           },
           {
             label: "Precision",
             data: precisionData,
-            fill: false,
             backgroundColor: "rgba(129, 178, 154, 0.6)", // Darker shade for Precision
             borderColor: "rgba(129, 178, 154, 1)",
             borderWidth: 1,
-            tension: 0.4,
           },
           {
             label: "Recall",
             data: recallData,
-            fill: false,
             backgroundColor: "rgba(210, 215, 211, 0.6)", // Darker shade for Recall
             borderColor: "rgba(210, 215, 211, 1)",
             borderWidth: 1,
-            tension: 0.4,
           },
           {
             label: "F1 Score",
             data: f1Data,
-            fill: false,
             backgroundColor: "rgba(249, 202, 36, 0.6)", // Darker shade for F1 Score
             borderColor: "rgba(249, 202, 36, 1)",
             borderWidth: 1,
-            tension: 0.4,
           },
         ],
       });
@@ -359,8 +351,13 @@ const Model = () => {
             <br />
             {/* Your chart rendering */}
             {data.labels && (
-              <Line data={data} options={options} width={600} height={400} ref={chartRef} />
-            )}
+              <Bar
+                data={data}
+                options={options}
+                width={600}
+                height={400}
+                ref={chartRef}
+              />            )}
             <br />
             {/* Button to fetch data and trigger animations */}
             <Button onClick={fetchData}>Fetch Data</Button>
