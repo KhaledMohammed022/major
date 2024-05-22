@@ -60,7 +60,7 @@ const Navbar = () => {
                         Prediction of task scheduling in Cloud using Machine Learning Techniques
                     </h1>
                 ) : (
-                    <TypewriterEffectSmooth className="flex flex-wrap" words={words} />
+                    <TypewriterEffectSmooth className='flex flex-wrap' words={words} />
                 )}
             </aside>
             <nav className="absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] hidden md:block">
