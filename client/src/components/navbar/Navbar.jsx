@@ -54,13 +54,13 @@ const Navbar = () => {
 
     return (
         <header className="fixed right-0 left-0 top-0 py-4 px-4 bg-black/40 backdrop-blur-lg z-[100] flex items-center border-b-[1px] border-neutral-900 justify-between">
-            <aside className="flex items-center gap-[2px]">
+            <aside className="flex flex-wrap items-center gap-[2px]">
                 {isSmallScreen ? (
-                    <h1 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">{/* Adjust font sizes based on screen width */}
+                    <h1 className="flex flex-wrap text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">{/* Adjust font sizes based on screen width */}
                         Prediction of task scheduling in Cloud using Machine Learning Techniques
                     </h1>
                 ) : (
-                    <TypewriterEffectSmooth words={words} />
+                    <TypewriterEffectSmooth className="flex flex-wrap" words={words} />
                 )}
             </aside>
             <nav className="absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] hidden md:block">
