@@ -299,7 +299,7 @@ const Model = () => {
               <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Training Samples</h1>
                 <p className="text-xl">Train Samples: {trainSamples}</p>
-                <p className="texl-xl">Test Samples: {testSamples}</p>
+                <p className="text-xl">Test Samples: {testSamples}</p>
               </section>
             )}
             <br />
