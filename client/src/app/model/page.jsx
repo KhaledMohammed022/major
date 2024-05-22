@@ -34,20 +34,29 @@ const Model = () => {
   const options = {
     animation: {
       tension: {
-        duration: 1000, // Animation duration in milliseconds
-        easing: "easeInOutCubic", // Easing function for the animation
-        from: 1, // Starting scale (1 means fully expanded)
-        to: 0, // Ending scale (0 means fully collapsed)
-        loop: true, // Repeat the animation
+        duration: 1000,
+        easing: "easeInOutCubic",
+        from: 1,
+        to: 0,
+        loop: true,
       },
     },
     scales: {
-      yAxes: [
+      xAxes: [
         {
-          type: "linear",
+          type: "linear", // Explicitly set the X-axis type to linear
           ticks: {
             beginAtZero: true,
-            stepSize:5,
+            stepSize: 5, // Set the desired step size
+          },
+        },
+      ],
+      yAxes: [
+        {
+          type: "linear", // Assuming your y-axis is linear
+          ticks: {
+            beginAtZero: true,
+            stepSize: 5, // Set the desired step size for the y-axis
           },
         },
       ],
@@ -342,7 +351,7 @@ const Model = () => {
               <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Predictions</h1>
                 {predictions.map((prediction, index) => (
-                  <TypewriterEffectSmooth key={index} words={[{ text: prediction, className: "" }]} className="mb-2" />
+                  <TypewriterEffectSmooth key={index} words={[{ text: prediction, className: "" }]} className="mb-2 text-xl" />
                 ))}
               </section>
             )}
