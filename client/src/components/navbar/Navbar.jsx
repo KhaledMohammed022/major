@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from "@clerk/clerk-react";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { useMediaQuery } from 'react-responsive'; // Import the useMediaQuery hook
+import { useMediaQuery } from 'react-responsive';
 
 const Navbar = () => {
     const { isLoaded, isSignedIn, user } = useUser();
@@ -45,18 +45,17 @@ const Navbar = () => {
     ];
     const handleSignInClick = () => {
         if (!user) {
-            window.location.href = '/sign-in'; // Redirect to the sign-in page
+            window.location.href = '/sign-in';
         }
     };
 
-    // Use the useMediaQuery hook to check screen width
     const isSmallScreen = useMediaQuery({ maxWidth: 640 });
 
     return (
         <header className="fixed right-0 left-0 top-0 py-4 px-4 bg-black/40 backdrop-blur-lg z-[100] flex items-center border-b-[1px] border-neutral-900 justify-between">
             <aside className="flex flex-wrap items-center gap-[2px]">
                 {isSmallScreen ? (
-                    <h1 className="flex flex-wrap text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">{/* Adjust font sizes based on screen width */}
+                    <h1 className="flex flex-wrap text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">
                         Prediction of task scheduling in Cloud using Machine Learning Techniques
                     </h1>
                 ) : (
@@ -85,7 +84,6 @@ const Navbar = () => {
                     height={50}
                     className="rounded-full"
                 />
-                {/* <ModeToggle className="absolute inset-0" /> */}
                 {isLoaded && (
                     <>
                         {isSignedIn ? (
