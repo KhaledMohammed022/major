@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,36 +11,36 @@ const Navbar = () => {
     const { isLoaded, isSignedIn, user } = useUser();
     const words = [
         {
-            text: "Prediction",
+            text: "PREDICTION",
         },
         {
-            text: "of",
+            text: "OF",
         },
         {
-            text: "task",
+            text: "TASK",
         },
         {
             text: "SCHEDULING",
         },
         {
-            text: "in",
+            text: "IN",
         },
         {
-            text: "Cloud",
+            text: "CLOUD",
         },
         {
-            text: "using",
+            text: "USING",
         },        
         {
-            text: " Machine",
+            text: "MACHINE",
             className: "text-blue-500 dark:text-blue-500",
         },
         {
-            text: "Learning",
+            text: "LEARNING",
             className: "text-blue-500 dark:text-blue-500",
         },
         {
-            text: "Techniques",
+            text: "TECHNIQUES",
         },
     ];
     const handleSignInClick = () => {
