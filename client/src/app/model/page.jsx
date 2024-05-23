@@ -47,9 +47,9 @@ const Model = () => {
         ticks: {
           // Explicitly define ticks to ensure exact values at 0, 5, 10, etc.
           beginAtZero: false,  // Start at 0 for clarity
-          min: 80,        // Minimum value (inclusive)
+          min: 80,            // Minimum value (inclusive)
           max: 100,          // Maximum value (inclusive) (adjusted to 100)
-          stepSize: 2,       // Increment between each tick
+          stepSize: 5,       // Increment between each tick
         },
       },
     },
