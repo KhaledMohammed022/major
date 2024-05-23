@@ -34,7 +34,7 @@ const Model = () => {
   const options = {
     animation: {
       tension: {
-        duration: 1000,
+        duration: 1000, // Adjust animation duration as desired (in milliseconds)
         easing: "easeInOutCubic",
         from: 1,
         to: 0,
@@ -42,18 +42,20 @@ const Model = () => {
       },
     },
     scales: {
-      yAxes: [{
-        type:"linear",
+      y: {
+        type: "linear",
         ticks: {
-          maxTicksLimit: 5,
-          suggestedMin: 75,
-          suggestedMax: 100,
-          stepSize: 5,
+          // Explicitly define ticks to ensure exact values at 0, 5, 10, etc.
+          beginAtZero: true,  // Start at 0 for clarity
+          min: 0,            // Minimum value (inclusive)
+          max: 100,          // Maximum value (inclusive) (adjusted to 100)
+          stepSize: 5,       // Increment between each tick
         },
-      }]
+      },
     },
     responsive: true,
   };
+  
 
   const fetchData = async () => {
     try {
@@ -342,14 +344,14 @@ const Model = () => {
               <section className="flex items-center justify-center p-15 flex-col">
                 <h1 className="text-2xl font-bold">Predictions</h1>
                 {predictions.map((prediction, index) => (
-                  <TypewriterEffectSmooth key={index} words={[{ text: prediction, className: "" }]} className="mb-2 text-xl" />
+                  <TypewriterEffectSmooth key={index} words={[{ text: prediction, className: "text-xl" }]} className="mb-2 text-xl" />
                 ))}
               </section>
             )}
             <br />
             <section className="flex items-center justify-center p-15 flex-col">
               <h1 className="text-2xl font-bold">Output</h1>
-              <p>Message: {message}</p>
+              <p className="text-xl">Message: {message}</p>
             </section>
           </div>
           <div>
@@ -357,7 +359,7 @@ const Model = () => {
             <br />
             {/* Your chart rendering */}
             {data.labels && (
-              <Bar data={data} options={options} width={600} height={400} ref={chartRef} />
+              <Bar data={data} options={options} width={600} height={600} ref={chartRef} />
             )}
             <br />
             {/* Button to fetch data and trigger animations */}

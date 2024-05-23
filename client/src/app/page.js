@@ -228,14 +228,14 @@ export default function Home() {
           About The Project
         </motion.h1>
       </LampContainer>
-      <TypewriterEffect
+      {/* <TypewriterEffect
         words={[
           {
             text: "Abstract",
             className: "text-blue-500 dark:text-blue-500 text-2xl md:text-2xl",
           },
         ]}
-      />
+      /> */}
       <TypewriterEffect
         words={userFriendlyDesign.map((word) => ({
           ...word,

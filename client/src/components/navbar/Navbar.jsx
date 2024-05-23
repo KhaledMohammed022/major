@@ -84,6 +84,7 @@ const Navbar = () => {
                     width={50}
                     height={50}
                     className="rounded-full"
+                    style={{ marginLeft: '20px' }}
                 />
                 {isLoaded && (
                     <>
