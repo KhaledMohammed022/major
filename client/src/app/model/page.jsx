@@ -359,7 +359,7 @@ const Model = () => {
             <br />
             {/* Your chart rendering */}
             {data.labels && (
-              <Bar data={data} options={options} width={600} height={600} ref={chartRef} />
+              <Bar data={data} min='80' options={options} width={450} height={600} ref={chartRef} />
             )}
             <br />
             {/* Button to fetch data and trigger animations */}
