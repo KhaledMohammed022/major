@@ -37,7 +37,7 @@ export const TypewriterEffect = ({
           width: "fit-content",
         },
         {
-          duration: 0.3,
+          duration: 0.1,
           delay: stagger(0.1),
           ease: "easeInOut",
         }
@@ -86,7 +86,7 @@ export const TypewriterEffect = ({
           opacity: 1,
         }}
         transition={{
-          duration: 0.8,
+          duration: 0.1,
           repeat: Infinity,
           repeatType: "reverse",
         }}
