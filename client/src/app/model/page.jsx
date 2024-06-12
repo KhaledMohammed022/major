@@ -27,7 +27,7 @@ const Model = () => {
   const [f1Score, setF1Score] = useState("");
   const { toast } = useToast();
 
-  const apiServerUrl = "https://major-gjhv.onrender.com"; // Your API server URL
+  const apiServerUrl = process.env.NEXT_PUBLIC_API_SERVER_URL
   const [data, setData] = useState({});
   const chartRef = useRef(null);
 
